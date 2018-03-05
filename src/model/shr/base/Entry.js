@@ -18,10 +18,21 @@ class Entry extends Any {
 
   /**
    * Set the ShrId.
+   * This field/value is required.
    * @param {ShrId} shrId - The shr.base.ShrId
    */
   set shrId(shrId) {
     this._shrId = shrId;
+  }
+
+  /**
+   * Set the ShrId and return 'this' for chaining.
+   * This field/value is required.
+   * @param {ShrId} shrId - The shr.base.ShrId
+   * @returns {Entry} this.
+   */
+  withShrId(shrId) {
+    this.shrId = shrId; return this;
   }
 
   /**
@@ -34,10 +45,21 @@ class Entry extends Any {
 
   /**
    * Set the EntryId.
+   * This field/value is required.
    * @param {EntryId} entryId - The shr.base.EntryId
    */
   set entryId(entryId) {
     this._entryId = entryId;
+  }
+
+  /**
+   * Set the EntryId and return 'this' for chaining.
+   * This field/value is required.
+   * @param {EntryId} entryId - The shr.base.EntryId
+   * @returns {Entry} this.
+   */
+  withEntryId(entryId) {
+    this.entryId = entryId; return this;
   }
 
   /**
@@ -57,6 +79,15 @@ class Entry extends Any {
   }
 
   /**
+   * Set the PersonOfRecord and return 'this' for chaining.
+   * @param {PersonOfRecord} personOfRecord - The shr.base.PersonOfRecord
+   * @returns {Entry} this.
+   */
+  withPersonOfRecord(personOfRecord) {
+    this.personOfRecord = personOfRecord; return this;
+  }
+
+  /**
    * Get the Version.
    * @returns {Version} The shr.core.Version
    */
@@ -73,6 +104,15 @@ class Entry extends Any {
   }
 
   /**
+   * Set the Version and return 'this' for chaining.
+   * @param {Version} version - The shr.core.Version
+   * @returns {Entry} this.
+   */
+  withVersion(version) {
+    this.version = version; return this;
+  }
+
+  /**
    * Get the EntryType.
    * @returns {EntryType} The shr.base.EntryType
    */
@@ -82,10 +122,21 @@ class Entry extends Any {
 
   /**
    * Set the EntryType.
+   * This field/value is required.
    * @param {EntryType} entryType - The shr.base.EntryType
    */
   set entryType(entryType) {
     this._entryType = entryType;
+  }
+
+  /**
+   * Set the EntryType and return 'this' for chaining.
+   * This field/value is required.
+   * @param {EntryType} entryType - The shr.base.EntryType
+   * @returns {Entry} this.
+   */
+  withEntryType(entryType) {
+    this.entryType = entryType; return this;
   }
 
   /**
@@ -98,10 +149,21 @@ class Entry extends Any {
 
   /**
    * Set the CreationTime.
+   * This field/value is required.
    * @param {CreationTime} creationTime - The shr.core.CreationTime
    */
   set creationTime(creationTime) {
     this._creationTime = creationTime;
+  }
+
+  /**
+   * Set the CreationTime and return 'this' for chaining.
+   * This field/value is required.
+   * @param {CreationTime} creationTime - The shr.core.CreationTime
+   * @returns {Entry} this.
+   */
+  withCreationTime(creationTime) {
+    this.creationTime = creationTime; return this;
   }
 
   /**
@@ -114,10 +176,21 @@ class Entry extends Any {
 
   /**
    * Set the LastUpdated.
+   * This field/value is required.
    * @param {LastUpdated} lastUpdated - The shr.base.LastUpdated
    */
   set lastUpdated(lastUpdated) {
     this._lastUpdated = lastUpdated;
+  }
+
+  /**
+   * Set the LastUpdated and return 'this' for chaining.
+   * This field/value is required.
+   * @param {LastUpdated} lastUpdated - The shr.base.LastUpdated
+   * @returns {Entry} this.
+   */
+  withLastUpdated(lastUpdated) {
+    this.lastUpdated = lastUpdated; return this;
   }
 
   /**
@@ -137,6 +210,15 @@ class Entry extends Any {
   }
 
   /**
+   * Set the Narrative and return 'this' for chaining.
+   * @param {Narrative} narrative - The shr.base.Narrative
+   * @returns {Entry} this.
+   */
+  withNarrative(narrative) {
+    this.narrative = narrative; return this;
+  }
+
+  /**
    * Get the Language.
    * @returns {Language} The shr.base.Language
    */
@@ -153,6 +235,15 @@ class Entry extends Any {
   }
 
   /**
+   * Set the Language and return 'this' for chaining.
+   * @param {Language} language - The shr.base.Language
+   * @returns {Entry} this.
+   */
+  withLanguage(language) {
+    this.language = language; return this;
+  }
+
+  /**
    * Get the SecurityLabel array.
    * @returns {Array<SecurityLabel>} The shr.base.SecurityLabel array
    */
@@ -166,6 +257,15 @@ class Entry extends Any {
    */
   set securityLabel(securityLabel) {
     this._securityLabel = securityLabel;
+  }
+
+  /**
+   * Set the SecurityLabel array and return 'this' for chaining.
+   * @param {Array<SecurityLabel>} securityLabel - The shr.base.SecurityLabel array
+   * @returns {Entry} this.
+   */
+  withSecurityLabel(securityLabel) {
+    this.securityLabel = securityLabel; return this;
   }
 
   /**
@@ -201,6 +301,15 @@ class Entry extends Any {
   }
 
   /**
+   * Set the Tag array and return 'this' for chaining.
+   * @param {Array<Tag>} tag - The shr.base.Tag array
+   * @returns {Entry} this.
+   */
+  withTag(tag) {
+    this.tag = tag; return this;
+  }
+
+  /**
    * Deserializes JSON data to an instance of the Entry class.
    * The JSON must be valid against the Entry JSON schema, although this is not validated by the function.
    * @param {object} json - the JSON data to deserialize
@@ -209,6 +318,48 @@ class Entry extends Any {
   static fromJSON(json={}) {
     const inst = new Entry();
     setPropertiesFromJSON(inst, json);
+    return inst;
+  }
+  /**
+   * Serializes an instance of the Entry class to a JSON object.
+   * The JSON is expected to be valid against the Entry JSON schema, but no validation checks are performed.
+   * @returns {object} a JSON object populated with the data from the element
+   */
+  toJSON() {
+    const inst = { 'shr.base.EntryType': { 'Value' : 'http://standardhealthrecord.org/spec/shr/base/Entry' } };
+    if (this.shrId != null) {
+      inst['shr.base.ShrId'] = typeof this.shrId.toJSON === 'function' ? this.shrId.toJSON() : this.shrId;
+    }
+    if (this.entryId != null) {
+      inst['shr.base.EntryId'] = typeof this.entryId.toJSON === 'function' ? this.entryId.toJSON() : this.entryId;
+    }
+    if (this.personOfRecord != null) {
+      inst['shr.base.PersonOfRecord'] = typeof this.personOfRecord.toJSON === 'function' ? this.personOfRecord.toJSON() : this.personOfRecord;
+    }
+    if (this.version != null) {
+      inst['shr.core.Version'] = typeof this.version.toJSON === 'function' ? this.version.toJSON() : this.version;
+    }
+    if (this.entryType != null) {
+      inst['shr.base.EntryType'] = typeof this.entryType.toJSON === 'function' ? this.entryType.toJSON() : this.entryType;
+    }
+    if (this.creationTime != null) {
+      inst['shr.core.CreationTime'] = typeof this.creationTime.toJSON === 'function' ? this.creationTime.toJSON() : this.creationTime;
+    }
+    if (this.lastUpdated != null) {
+      inst['shr.base.LastUpdated'] = typeof this.lastUpdated.toJSON === 'function' ? this.lastUpdated.toJSON() : this.lastUpdated;
+    }
+    if (this.narrative != null) {
+      inst['shr.base.Narrative'] = typeof this.narrative.toJSON === 'function' ? this.narrative.toJSON() : this.narrative;
+    }
+    if (this.language != null) {
+      inst['shr.base.Language'] = typeof this.language.toJSON === 'function' ? this.language.toJSON() : this.language;
+    }
+    if (this.securityLabel != null) {
+      inst['shr.base.SecurityLabel'] = this.securityLabel.map(f => f.toJSON());
+    }
+    if (this.tag != null) {
+      inst['shr.base.Tag'] = this.tag.map(f => f.toJSON());
+    }
     return inst;
   }
 }

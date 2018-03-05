@@ -25,6 +25,15 @@ class ContraceptiveMethodRequested extends ContraceptiveAction {
   }
 
   /**
+   * Set the entry information and return 'this' for chaining.
+   * @param {Entry} entryInfo - The shr.base.Entry
+   * @returns {ContraceptiveMethodRequested} this.
+   */
+  withEntryInfo(entryInfo) {
+    this.entryInfo = entryInfo; return this;
+  }
+
+  /**
    * Get the RequestedContext.
    * @returns {RequestedContext} The shr.action.RequestedContext
    */
@@ -34,10 +43,21 @@ class ContraceptiveMethodRequested extends ContraceptiveAction {
 
   /**
    * Set the RequestedContext.
+   * This field/value is required.
    * @param {RequestedContext} actionContext - The shr.action.RequestedContext
    */
   set actionContext(actionContext) {
     this._actionContext = actionContext;
+  }
+
+  /**
+   * Set the RequestedContext and return 'this' for chaining.
+   * This field/value is required.
+   * @param {RequestedContext} actionContext - The shr.action.RequestedContext
+   * @returns {ContraceptiveMethodRequested} this.
+   */
+  withActionContext(actionContext) {
+    this.actionContext = actionContext; return this;
   }
 
   /**
@@ -49,6 +69,43 @@ class ContraceptiveMethodRequested extends ContraceptiveAction {
   static fromJSON(json={}) {
     const inst = new ContraceptiveMethodRequested();
     setPropertiesFromJSON(inst, json);
+    return inst;
+  }
+  /**
+   * Serializes an instance of the ContraceptiveMethodRequested class to a JSON object.
+   * The JSON is expected to be valid against the ContraceptiveMethodRequested JSON schema, but no validation checks are performed.
+   * @returns {object} a JSON object populated with the data from the element
+   */
+  toJSON() {
+    const inst = this._entryInfo.toJSON();
+    inst['shr.base.EntryType'] = { 'Value' : 'http://standardhealthrecord.org/spec/shr/sex/ContraceptiveMethodRequested' };
+    if (this.value != null) {
+      inst['Value'] = typeof this.value.toJSON === 'function' ? this.value.toJSON() : this.value;
+    }
+    if (this.relatedEncounter != null) {
+      inst['shr.base.RelatedEncounter'] = typeof this.relatedEncounter.toJSON === 'function' ? this.relatedEncounter.toJSON() : this.relatedEncounter;
+    }
+    if (this.author != null) {
+      inst['shr.base.Author'] = typeof this.author.toJSON === 'function' ? this.author.toJSON() : this.author;
+    }
+    if (this.informant != null) {
+      inst['shr.base.Informant'] = typeof this.informant.toJSON === 'function' ? this.informant.toJSON() : this.informant;
+    }
+    if (this.type != null) {
+      inst['shr.entity.Type'] = typeof this.type.toJSON === 'function' ? this.type.toJSON() : this.type;
+    }
+    if (this.category != null) {
+      inst['shr.core.Category'] = this.category.map(f => f.toJSON());
+    }
+    if (this.actionContext != null) {
+      inst['shr.action.ActionContext'] = typeof this.actionContext.toJSON === 'function' ? this.actionContext.toJSON() : this.actionContext;
+    }
+    if (this.medicationOrCode != null) {
+      inst['shr.entity.MedicationOrCode'] = typeof this.medicationOrCode.toJSON === 'function' ? this.medicationOrCode.toJSON() : this.medicationOrCode;
+    }
+    if (this.dosage != null) {
+      inst['shr.medication.Dosage'] = typeof this.dosage.toJSON === 'function' ? this.dosage.toJSON() : this.dosage;
+    }
     return inst;
   }
 }

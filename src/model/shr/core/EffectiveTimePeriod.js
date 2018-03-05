@@ -19,5 +19,20 @@ class EffectiveTimePeriod extends TimePeriod {
     setPropertiesFromJSON(inst, json);
     return inst;
   }
+  /**
+   * Serializes an instance of the EffectiveTimePeriod class to a JSON object.
+   * The JSON is expected to be valid against the EffectiveTimePeriod JSON schema, but no validation checks are performed.
+   * @returns {object} a JSON object populated with the data from the element
+   */
+  toJSON() {
+    const inst = { 'shr.base.EntryType': { 'Value' : 'http://standardhealthrecord.org/spec/shr/core/EffectiveTimePeriod' } };
+    if (this.timePeriodStart != null) {
+      inst['shr.core.TimePeriodStart'] = typeof this.timePeriodStart.toJSON === 'function' ? this.timePeriodStart.toJSON() : this.timePeriodStart;
+    }
+    if (this.timePeriodEnd != null) {
+      inst['shr.core.TimePeriodEnd'] = typeof this.timePeriodEnd.toJSON === 'function' ? this.timePeriodEnd.toJSON() : this.timePeriodEnd;
+    }
+    return inst;
+  }
 }
 export default EffectiveTimePeriod;
