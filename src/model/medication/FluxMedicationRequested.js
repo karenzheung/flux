@@ -129,12 +129,23 @@ class FluxMedicationRequested {
     
     get routeIntoBody() {
         if (!this._medicationRequested.dosage || !this._medicationRequested.dosage.routeIntoBody) return null;
-        return this._medicationRequested.dosage.routeIntoBody.value.coding[0].displayText.value;
+        return this._displayTextOrCode(this._medicationRequested.dosage.routeIntoBody.value.coding[0]);
     }
     
     get numberOfRefillsAllowed() {
         if (!this._medicationRequested.numberOfRefillsAllowed) return null;
         return this._medicationRequested.numberOfRefillsAllowed.value;
+    }
+
+    /**
+     * Extract a human-readable string from a code.
+     *
+     * @param {Coding} coding
+     * @returns {string} the display text if available, otherwise the code.
+     * @private
+     */
+    _displayTextOrCode(coding) {
+        return coding.displayText ? coding.displayText.value : coding.value;
     }
 }
 

@@ -36,7 +36,7 @@ class FluxCondition {
 
     get type() {
         if (!this._condition.value) return null;
-        return this._condition.value.coding[0].displayText.value;
+        return this._displayTextOrCode(this._condition.value.coding[0]);
     }
 
     get observation() {
@@ -45,11 +45,18 @@ class FluxCondition {
         }) || [];
     }
 
+    /**
+     * Get the body site for the condition in a sane way.
+     *
+     * @returns {?string} the first body site for this condition.
+     */
     get bodySite() {
-        if (this._condition.bodySiteOrCode.value instanceof BodySite) {
-            return this._condition.bodySiteOrCode.value.value.coding[0].displayText.value;
+        if (!this._condition.bodySiteOrCode || (!this._condition.bodySiteOrCode.length)) {
+            return null;
+        } else if (this._condition.bodySiteOrCode[0].value instanceof BodySite) {
+            return this._displayTextOrCode(this._condition.bodySiteOrCode[0].value.value.coding[0]);
         } else { // CodeableConcept
-            return this._condition.bodySiteOrCode.value.coding[0].displayText.value;
+            return this._displayTextOrCode(this._condition.bodySiteOrCode[0].value.coding[0]);
         }
     }
     
@@ -61,7 +68,7 @@ class FluxCondition {
         if (    !this._condition.bodySiteOrCode || 
                 !this._condition.bodySiteOrCode.value || 
                 !(this._condition.bodySiteOrCode.value instanceof BodySite)) return null;
-        return this._condition.bodySiteOrCode.value.laterality.value.coding[0].displayText.value;        
+        return this._displayTextOrCode(this._condition.bodySiteOrCode.value.laterality.value.coding[0]);
     }
 
     addObservation(observation, clinicalNote) {
@@ -344,6 +351,17 @@ class FluxCondition {
             return 1;
         }
         return 0;
+    }
+
+    /**
+     * Extract a human-readable string from a code.
+     *
+     * @param {Coding} coding
+     * @returns {string} the display text if available, otherwise the code.
+     * @private
+     */
+    _displayTextOrCode(coding) {
+        return coding.displayText ? coding.displayText.value : coding.value;
     }
 }
 
