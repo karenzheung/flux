@@ -10,7 +10,19 @@ class FluxPerson {
     }
 
     get name() {
-        return this._person.humanName;
+        if (!this._person.humanName || (this._person.humanName.length < 1)) {
+            return null;
+        }
+        // TODO: Do we just assume that the first human name is the "correct" one?
+        const humanName = this._person.humanName[0];
+        let ret = [];
+        if (humanName.givenName && humanName.givenName.length) {
+            ret = humanName.givenName.map(gn => gn.value);
+        }
+        if (humanName.familyName) {
+            ret.push(humanName.familyName.value);
+        }
+        return ret.length ? ret.join(' ') : null;
     }
 
     get dateOfBirth() {
@@ -18,7 +30,11 @@ class FluxPerson {
     }
 
     get address() {
-        return this._person.address;
+        if (!this._person.address || (this._person.address.length < 1)) {
+            return null;
+        } else {
+            return this._person.address[0];
+        }
     }
 
     get headshot() {

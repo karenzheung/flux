@@ -85,7 +85,7 @@ class SummaryHeader extends Component {
                                 <h1>{patientName}</h1>
                                 <h3 className="patient-item">DOB: <span className="no-wrap">{dateOfBirth} ({age})</span></h3>
                                 <h3 className="patient-item">Admin. Sex:  <span>{administrativeSex}</span></h3>
-                                <h3 className="patient-item">Location: <span>{address ? address.city.value : ""}, {address ? address.state.value : ""}</span></h3>
+                                <h3 className="patient-item">Location: <span>{address && address.city ? address.city.value : ""}, {address && address.state ? address.state.value : ""}</span></h3>
                             </div>
                         </Col>
 
