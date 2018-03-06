@@ -38,6 +38,11 @@ class FluxPerson {
     }
 
     get headshot() {
+        if (!this._person.headshot) {
+            return null;
+        } else if (!this._person.headshot.attachment.resourceLocation) {
+            return null;
+        }
         return this._person.headshot.attachment.resourceLocation.uri;
     }
 }
