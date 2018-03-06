@@ -59,9 +59,14 @@ class FluxCondition {
             return this._displayTextOrCode(this._condition.bodySiteOrCode[0].value.coding[0]);
         }
     }
-    
+
+    /**
+     * Get the code for the clinical status.
+     *
+     * @returns {?string} the clinical status, if available.
+     */
     get clinicalStatus() {
-        return this._condition.clinicalStatus.value;
+        return this._condition.clinicalStatus ? this._condition.clinicalStatus.value : null;
     }
     
     get laterality() {

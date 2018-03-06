@@ -120,7 +120,7 @@ class FluxMedicationRequested {
      *  Returns array of reasons
      */
     get reasons() {
-        return this._medicationRequested.actionContext.reason;
+        return this._medicationRequested.actionContext.reason ? this._medicationRequested.actionContext.reason : [];
     }
     
     get code() {
