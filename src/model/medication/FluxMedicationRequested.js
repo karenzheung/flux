@@ -124,6 +124,7 @@ class FluxMedicationRequested {
     }
     
     get code() {
+        // TODO: Support a medication here
         return this._medicationRequested.medicationOrCode.value.coding[0].code;
     }
     
