@@ -448,7 +448,7 @@ class PatientRecord {
         let conditions = this.getConditions();
         let result = [];
         conditions.forEach((c) => {
-            if (c.entryInfo.entryId === condition.entryInfo.entryId) {
+            if (c.entryInfo.entryId.value === condition.entryInfo.entryId.value) {
                 result.push({
                     name: "diagnosis date - " + c.type,
                     start_time: c.diagnosisDate
@@ -481,7 +481,7 @@ class PatientRecord {
         let medications = this.getMedicationsChronologicalOrder();
         medications = medications.filter((med) => {
             return med instanceof FluxMedicationRequested && med.reasons.some((r) => {
-                return r.value.entryId && r.value.entryId === condition.entryInfo.entryId;
+                return r.value.entryId && r.value.entryId === condition.entryInfo.entryId.value;
             });
         });
         return medications;
@@ -500,7 +500,7 @@ class PatientRecord {
     getProceduresForCondition(condition) {
         return this.entries.filter((item) => {
             return item instanceof FluxProcedureRequested && item.reasons && item.reasons.some((r) => {
-                    return r.value.entryId && r.value.entryId === condition.entryInfo.entryId;
+                    return r.value.entryId && r.value.entryId === condition.entryInfo.entryId.value;
                 });
         });
     }
@@ -529,14 +529,14 @@ class PatientRecord {
 
     getProgressionsForCondition(condition) {
         return this.entries.filter((item) => {
-            return item instanceof FluxDiseaseProgression && item.focalSubjectReference.entryId === condition.entryInfo.entryId;
+            return item instanceof FluxDiseaseProgression && item.focalSubjectReference.entryId === condition.entryInfo.entryId.value;
         });
     }
 
     getProgressionsForConditionChronologicalOrder(condition) {
         let progressions = this.getProgressionsChronologicalOrder();
         progressions = progressions.filter((progression) => {
-            return progression.focalSubjectReference.entryId === condition.entryInfo.entryId;
+            return progression.focalSubjectReference.entryId === condition.entryInfo.entryId.value;
         });
         return progressions;
     }
@@ -544,7 +544,7 @@ class PatientRecord {
     getFocalConditionForProgression(progression) {
         let result = this.entries.filter((item) => {
             return (item instanceof FluxCondition)
-                && progression.focalSubjectReference.entryId === item.entryInfo.entryId
+                && progression.focalSubjectReference.entryId === item.entryInfo.entryId.value
         });
         return result[0];
     }
@@ -736,7 +736,7 @@ class PatientRecord {
 
     getEntryFromReference(ref) {
         return this.entries.find((item) => {
-            return item.entryInfo.entryId === ref.entryId;
+            return item.entryInfo.entryId.value === ref.entryId;
         });
     }
 
