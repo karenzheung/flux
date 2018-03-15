@@ -21,7 +21,7 @@ class FluxHER2ReceptorStatus extends FluxObservation {
      */
     get status() {
         if (!this._observation.value) return null;
-        return this._observation.value.coding[0].displayText.value;
+        return this._displayTextOrCode(this._observation.value.coding[0]);
     }
 
     /**
@@ -29,6 +29,18 @@ class FluxHER2ReceptorStatus extends FluxObservation {
      */
     set status(statusVal) {
         this._observation.value = lookup.getReceptorCodeableConcept(statusVal);
+    }
+
+
+    /**
+     * Extract a human-readable string from a code.
+     *
+     * @param {Coding} coding
+     * @returns {string} the display text if available, otherwise the code.
+     * @private
+     */
+    _displayTextOrCode(coding) {
+        return coding.displayText ? coding.displayText.value : coding.value;
     }
 }
 
