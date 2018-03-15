@@ -50,7 +50,7 @@ class FluxMedicationRequested {
      *  Returns displayText string for medication
      */
     get medication() {
-        return this._medicationRequested.medicationOrCode.value.coding[0].displayText.value;
+        return this._displayTextOrCode(this._medicationRequested.medicationOrCode.value.coding[0]);
     }
 
     /*
