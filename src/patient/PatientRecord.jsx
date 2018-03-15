@@ -551,6 +551,9 @@ class PatientRecord {
 
     getMostRecentProgressionForCondition(condition, sinceDate = null) {
         let progressionList = this.getProgressionsForCondition(condition);
+        if (!progressionList.length) {
+            return null;
+        }
         const sortedProgressionList = progressionList.sort(this._progressionTimeSorter);
         const length = sortedProgressionList.length;
         let p = (sortedProgressionList[length - 1]);
