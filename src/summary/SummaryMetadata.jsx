@@ -209,7 +209,7 @@ export default class SummaryMetadata {
                                     {
                                         name: "Recurrence",
                                         value: (patient, currentConditionEntry) => {
-                                            if (currentConditionEntry.clinicalStatus.value === "recurrence") {
+                                            if (currentConditionEntry.clinicalStatus === "recurrence") {
                                                 return null;
                                             } else {
                                                 return ["N/A", patient.isUnsigned(currentConditionEntry)];
@@ -408,6 +408,7 @@ export default class SummaryMetadata {
                                         name: "Histological Grade",
                                         value: (patient, currentConditionEntry) => {
                                             let histologicalGrade = currentConditionEntry.getMostRecentHistologicalGrade();
+                                            if (!histologicalGrade) return null;
                                             return [ histologicalGrade.grade, patient.isUnsigned(histologicalGrade) ];
                                         }
                                     },
