@@ -6,6 +6,7 @@ import FluxObservation from '../finding/FluxObservation';
 import FluxProcedureRequested from '../procedure/FluxProcedureRequested';
 import Lang from 'lodash';
 import moment from 'moment';
+import Reference from '../Reference';
 
 class FluxCondition {
     constructor(json, patientRecord) {
@@ -108,7 +109,11 @@ class FluxCondition {
     getObservationsOfType(type) {
         if (!this._condition.evidence) return [];
         return this._condition.evidence.map((item) => {
-            return this._patientRecord.getEntryFromReference(item);
+            if (item.value instanceof Reference) {
+                return this._patientRecord.getEntryFromReference(item.value);
+            } else {
+                return false;
+            }
         }).filter((item) => {
             return item != null && item.constructor === type;
         });
