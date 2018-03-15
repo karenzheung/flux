@@ -108,7 +108,7 @@ class FluxMedicationRequested {
      * Returns author string
      */
     get prescribedBy() {
-        return this._medicationRequested.author.value;
+        return this._medicationRequested.author ? this._medicationRequested.author.value : null;
     }
     
     /*
