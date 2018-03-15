@@ -110,7 +110,7 @@ class FluxCondition {
         return this._condition.evidence.map((item) => {
             return this._patientRecord.getEntryFromReference(item);
         }).filter((item) => {
-            return item.constructor === type;
+            return item != null && item.constructor === type;
         });
     }
 
