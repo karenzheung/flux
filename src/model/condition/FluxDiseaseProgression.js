@@ -112,7 +112,7 @@ class FluxDiseaseProgression {
     
     get focalSubjectReference() {
         if (this._diseaseProgression.focalSubjectReference) {
-            return this._diseaseProgression.focalSubjectReference;
+            return this._diseaseProgression.focalSubjectReference.value;
         }
         return null;
     }
