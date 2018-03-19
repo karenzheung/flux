@@ -1,20 +1,28 @@
 import EncounterRequested from '../shr/encounter/EncounterRequested';
+import FluxEncounter from './FluxEncounter';
+import Timing from '../shr/core/Timing';
 
-class FluxEncounterRequested {
+class FluxEncounterRequested extends FluxEncounter {
     constructor(json) {
+        super(json);
         this._encounterRequested = EncounterRequested.fromJSON(json);
     }
 
-    get entryInfo() {
-        return this._encounterRequested.entryInfo;
+    /**
+     * @returns {EncounterRequested}
+     */
+    get encounter() {
+        return this._encounterRequested;
     }
 
-    get reasons() {
-        return this._encounterRequested.actionContext.reason;
-    }
-
-    get expectedPerformanceTime() {
-        return this._encounterRequested.actionContext.expectedPerformanceTime.value;
+    /**
+     * @returns {(dateTime|date|TimePeriod)}
+     */
+    _actualEncounterTime() {
+        if (this.encounter.actionContext.expectedPerformanceTime instanceof Timing) {
+            throw new Error('Timing is unsupported.');
+        }
+        return this.encounter.actionContext.expectedPerformanceTime ? this.encounter.actionContext.expectedPerformanceTime.value : null;
     }
 }
 

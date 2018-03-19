@@ -1,5 +1,6 @@
 import { getNamespaceAndName } from '../json-helper';
 import ShrEncounterObjectFactory from '../shr/encounter/ShrEncounterObjectFactory';
+import FluxEncounterPerformed from './FluxEncounterPerformed';
 import FluxEncounterRequested from './FluxEncounterRequested';
 
 export default class FluxEncounterObjectFactory {
@@ -10,6 +11,7 @@ export default class FluxEncounterObjectFactory {
         }
         // returns Flux wrapper class if found, otherwise use ShrEncounterObjectFactory
         switch (elementName) {
+            case 'EncounterPerformed': return new FluxEncounterPerformed(json);
             case 'EncounterRequested': return new FluxEncounterRequested(json);
             default: return ShrEncounterObjectFactory.createInstance(json, type);
         }

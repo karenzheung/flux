@@ -5,7 +5,7 @@ import FluxBreastCancerGeneticAnalysisPanel from '../model/oncology/FluxBreastCa
 import FluxClinicalNote from '../model/core/FluxClinicalNote';
 import FluxCondition from '../model/condition/FluxCondition';
 import FluxDiseaseProgression from '../model/condition/FluxDiseaseProgression';
-import FluxEncounterRequested from '../model/encounter/FluxEncounterRequested';
+import FluxEncounter from '../model/encounter/FluxEncounter';
 import FluxMedicationRequested from '../model/medication/FluxMedicationRequested';
 import FluxNoKnownAllergy from '../model/allergy/FluxNoKnownAllergy';
 import FluxPatient from '../model/entity/FluxPatient';
@@ -229,14 +229,14 @@ class PatientRecord {
         // filter out any encounters happening after the specified moment argument
         return encounters.filter((encounter) => {
             const now = new moment();
-            const encounterStartTime = new moment(encounter.expectedPerformanceTime, "D MMM YYYY HH:mm Z");
+            const encounterStartTime = new moment(encounter.encounterTime, "D MMM YYYY HH:mm Z");
             return encounterStartTime.isAfter(now, "second");
         })[0];
     }
 
     // returns sorted list of encounters
     getEncountersChronologicalOrder(){
-        let encounters = this.getEntriesOfType(FluxEncounterRequested);
+        let encounters = this.getEntriesOfType(FluxEncounter);
         encounters.sort(this._encounterTimeSorter);
         return encounters;
 
@@ -246,6 +246,7 @@ class PatientRecord {
     getNextEncounterReasonAsText() {
         const nextEncounter = this.getNextEncounter();
         if (Lang.isUndefined(nextEncounter)) return "No upcoming appointments";
+        if (!nextEncounter.reasons) return "No recorded reason for next appointment at " + nextEncounter.encounterTime;
         // Tried replacing breast cancer condition text to establish condition context
         // return nextEncounter.reason.replace('Invasive ductal carcinoma of the breast', '@condition[[Invasive ductal carcinoma of the breast]]');
         return nextEncounter.reasons.map((r) => { return r.value; }).join(',');
@@ -257,7 +258,7 @@ class PatientRecord {
         // filter out any encounters happening before the specified moment argument
         const now = new moment();
         return encounters.filter((encounter) => {
-            const encounterStartTime = new moment(encounter.expectedPerformanceTime, "D MMM YYYY HH:mm Z");
+            const encounterStartTime = new moment(encounter.encounterTime, "D MMM YYYY HH:mm Z");
             return encounterStartTime.isBefore(now, "second");
         }).pop();
     }
@@ -265,6 +266,7 @@ class PatientRecord {
     getPreviousEncounterReasonAsText() {
         const previousEncounter = this.getPreviousEncounter();
         if (Lang.isUndefined(previousEncounter)) return "No recent appointments";
+        if (!previousEncounter.reasons) return "No recorded reason for last appointment at " + previousEncounter.encounterTime;
         return previousEncounter.reasons.map((r) => { return r.value; }).join(',');
     }
 
@@ -577,9 +579,17 @@ class PatientRecord {
         }
         return 0;
     }
+
+    /**
+     *
+     * @param {FluxEncounter} a
+     * @param {FluxEncounter} b
+     * @returns {number}
+     * @private
+     */
     _encounterTimeSorter(a, b) {
-        const a_startTime = new moment(a.expectedPerformanceTime, "D MMM YYYY HH:mm Z");
-        const b_startTime = new moment(b.expectedPerformanceTime, "D MMM YYYY HH:mm Z");
+        const a_startTime = new moment(a.encounterTime, "D MMM YYYY HH:mm Z");
+        const b_startTime = new moment(b.encounterTime, "D MMM YYYY HH:mm Z");
 
         if (a_startTime.isBefore(b_startTime, "second")) {
             return -1;
