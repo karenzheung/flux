@@ -42,10 +42,8 @@ class PatientRecord {
     }
     
     _calculateNextEntryId() {
-        this.nextEntryId = Math.max.apply(Math, this.entries.map(function (o) {
-            return o.entryInfo.entryId;
-        })) + 1;
-    }        
+        this.nextEntryId = Guid.raw();
+    }
 
     _loadJSON(shrJson) {
         return shrJson.map((entry) => {
