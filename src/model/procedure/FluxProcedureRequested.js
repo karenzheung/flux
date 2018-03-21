@@ -1,5 +1,7 @@
-import TimePeriod from '../shr/core/TimePeriod';
+import CodeableConcept from '../shr/core/CodeableConcept';
 import ProcedureRequested from '../shr/procedure/ProcedureRequested';
+import TimePeriod from '../shr/core/TimePeriod';
+import Timing from '../shr/core/Timing';
 
 class FluxProcedureRequested {
     constructor(json) {
@@ -16,13 +18,20 @@ class FluxProcedureRequested {
      *  Returns a date if a single value
      */
     get occurrenceTime() {
-        if(this._procedureRequested.actionContext.expectedPerformanceTime.value instanceof TimePeriod) {
+        if (!this._procedureRequested.actionContext || !this._procedureRequested.actionContext.expectedPerformanceTime) {
+            return null;
+        }
+        // doesn't support Timing option right now
+        if(this._procedureRequested.actionContext.expectedPerformanceTime.value instanceof Timing) {
+            return null;
+        } else if(this._procedureRequested.actionContext.expectedPerformanceTime.value instanceof TimePeriod) {
             return {
-                timePeriodStart: this._procedureRequested.actionContext.expectedPerformanceTime.value.timePeriodStart.value,
-                timePeriodEnd: this._procedureRequested.actionContext.expectedPerformanceTime.value.timePeriodEnd.value
+                timePeriodStart: (this._procedureRequested.actionContext.expectedPerformanceTime.value.timePeriodStart ? this._procedureRequested.actionContext.expectedPerformanceTime.value.timePeriodStart.value : null),
+                timePeriodEnd: (this._procedureRequested.actionContext.expectedPerformanceTime.value.timePeriodEnd ? this._procedureRequested.actionContext.expectedPerformanceTime.value.timePeriodEnd.value : null)
             };
         } else {
-            return this._procedureRequested.actionContext.expectedPerformanceTime.value;
+            const date = this._procedureRequested.actionContext.expectedPerformanceTime.value;
+            return { timePeriodStart: date, timePeriodEnd: date };
         }
     }
 
@@ -31,7 +40,12 @@ class FluxProcedureRequested {
      *  Returns status string
      */
     get status() {
-        return this._procedureRequested.actionContext.status.value;
+        // TODO: This will choke on raw codes, but we don't use those anyways.
+        if (this._procedureRequested.actionContext.status.value instanceof CodeableConcept) {
+            return this._displayTextOrCode(this._procedureRequested.actionContext.status.value.value[0]);
+        } else {
+            return this._displayTextOrCode(this._procedureRequested.actionContext.status.value);
+        }
     }
 
     /*
@@ -39,7 +53,7 @@ class FluxProcedureRequested {
      *  Returns procedure name string
      */
     get name() {
-        return this._procedureRequested.type.value.coding[0].displayText.value;
+        return this._displayTextOrCode(this._procedureRequested.type.value.coding[0]);
     }
 
     /*
@@ -56,6 +70,17 @@ class FluxProcedureRequested {
         } else {
             return null;
         }
+    }
+
+    /**
+     * Extract a human-readable string from a code.
+     *
+     * @param {Coding} coding
+     * @returns {string} the display text if available, otherwise the code.
+     * @private
+     */
+    _displayTextOrCode(coding) {
+        return coding.displayText ? coding.displayText.value : coding.value;
     }
 }
 
