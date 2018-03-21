@@ -477,7 +477,8 @@ export default class SummaryMetadata {
                                             if (!panels || panels.length === 0) return null;
                                             const panel = panels.pop();
                                             return [panel.members.map((item) => {
-                                                const v = item.value === 'Positive' ? '+' : '-';
+                                                // TODO: handle pos/neg/ind codes more gracefully
+                                                const v = item.value === 'C1446409' ? '+' : ('C0205160' ? '-' : '?');
                                                 return item.abbreviatedName + v;
                                             }).join(","), patient.isUnsigned(panel)];
                                         }

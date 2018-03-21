@@ -10,7 +10,7 @@ class FluxBRCA1Variant {
     }
 
     get value() {
-        return this._brca1Variant.value.coding[0].displayText.value;
+        return this._brca1Variant.value.coding[0].value;
     }
 }
 
