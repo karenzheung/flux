@@ -91,8 +91,9 @@ class FluxMedicationRequested {
                 value: timingOfDoses.timing.timingCode.value.coding[0].displayText.value,
                 units: null
             }
+        } else {
+            return { value: null, units: null };
         }
-        return null;
     }
 
     /*
