@@ -625,13 +625,11 @@ export default class SummaryMetadata {
                         shortName: "Meds",
                         clinicalEvents: ["pre-encounter"],
                         defaultVisualizer: "chart",
-                        type: "Columns",
+                        type: "Medications",
                         data: [
                             {
                                 name: "",
-                                headings: ["Medication", "Dosage", "Timing", "Start", "End"],
                                 itemsFunction: this.getItemListForMedications,
-
                             }
                         ]
                     },
