@@ -58,6 +58,9 @@ export class FullApp extends Component {
         this.structuredFieldMapManager = new StructuredFieldMapManager();
 
         this.state = {
+            userAccessToken: null,
+            userName: null,
+            userEmail: null,
             clinicalEvent: "pre-encounter",
             condition: null,
             contextManager: this.contextManager,
@@ -125,8 +128,76 @@ export class FullApp extends Component {
         ]
     }
 
+    /*
+    * Create form to request access token from Google's OAuth 2.0 server.
+    */
+   oauthSignIn = () => {
+        // Google's OAuth 2.0 endpoint for requesting an access token
+        const oauth2Endpoint = 'https://accounts.google.com/o/oauth2/v2/auth';
+
+        // Create <form> element to submit parameters to OAuth 2.0 endpoint.
+        var form = document.createElement('form');
+        form.setAttribute('method', 'GET'); // Send as a GET request.
+        form.setAttribute('action', oauth2Endpoint);
+
+
+        // Parameters to pass to OAuth 2.0 endpoint.
+        var params = {'client_id': '46090867366-mola679it62f8cvnhe5mijtaia7t4drl.apps.googleusercontent.com',
+                    'redirect_uri': 'http://localhost:3000/demo2',
+                    'response_type': 'token',
+                    'scope': 'https://www.googleapis.com/auth/drive.metadata.readonly'
+                    };
+
+        // Add form parameters as hidden input values.
+        for (var p in params) {
+        var input = document.createElement('input');
+        input.setAttribute('type', 'hidden');
+        input.setAttribute('name', p);
+        input.setAttribute('value', params[p]);
+        form.appendChild(input);
+        }
+
+        // Add form to page and submit it to open the OAuth 2.0 endpoint.
+        document.body.appendChild(form);
+        form.submit();
+    }
+
+    componentWillMount() {
+        let fragmentString = window.location.hash.substring(1);
+        // Parse query string to see if page request is coming from OAuth 2.0 server.
+        let params = {};
+        let regex = /([^&=]+)=([^&]*)/g, m;
+        while (m = regex.exec(fragmentString)) {
+            params[decodeURIComponent(m[1])] = decodeURIComponent(m[2]);
+        }
+        console.log(params);
+        this.setState({
+            userAccessToken: params.access_token,
+        })
+        console.log(params.access_token);
+        console.log(this.state.userAccessToken);
+    }
+
     // On component mount, grab the username of the logged in user
     componentDidMount() {
+        console.log("User Id is: ", this.state.userAccessToken);
+        if (!this.state.userAccessToken) {
+            this.oauthSignIn();
+        }
+        else {
+            let url = "https://www.googleapis.com/drive/v3/about?fields=user&access_token="+this.state.userAccessToken;
+            fetch(url)
+            .then (response => response.json())
+            .then(responseJson => {
+                console.log(responseJson);
+                this.setState({
+                    userName: responseJson.displayName,
+                    userEmail: responseJson.emailAddress
+                });
+            })
+            .catch((err) => console.log(err))
+        }
+
         const userProfile = this.securityManager.getUserProfile();
 
         if (userProfile) {
