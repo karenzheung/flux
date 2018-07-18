@@ -162,43 +162,33 @@ export class FullApp extends Component {
         form.submit();
     }
 
-    componentWillMount() {
-        let fragmentString = window.location.hash.substring(1);
-        // Parse query string to see if page request is coming from OAuth 2.0 server.
-        let params = {};
-        let regex = /([^&=]+)=([^&]*)/g, m;
-        while (m = regex.exec(fragmentString)) {
-            params[decodeURIComponent(m[1])] = decodeURIComponent(m[2]);
-        }
-        console.log(params);
-        this.setState({
-            userAccessToken: params.access_token,
+    getUserInformation = (userAccessToken) => {
+        let url = "https://www.googleapis.com/drive/v3/about?fields=user&access_token="+userAccessToken;
+        // let userName = 'Dr. 123';
+        fetch(url)
+        .then (response => response.json())
+        .then(responseJson => {
+            this.setState({
+                userName: responseJson.user.displayName
+            })
         })
-        console.log(params.access_token);
-        console.log(this.state.userAccessToken);
+        .catch((err) => console.log(err))
+    }
+
+    componentWillMount() {
+        let accessToken = this.securityManager.getAccessToken();
+        this.setState({
+            userAccessToken: accessToken
+        })
     }
 
     // On component mount, grab the username of the logged in user
     componentDidMount() {
-        console.log("User Id is: ", this.state.userAccessToken);
         if (!this.state.userAccessToken) {
-            this.oauthSignIn();
-        }
-        else {
-            let url = "https://www.googleapis.com/drive/v3/about?fields=user&access_token="+this.state.userAccessToken;
-            fetch(url)
-            .then (response => response.json())
-            .then(responseJson => {
-                console.log(responseJson);
-                this.setState({
-                    userName: responseJson.displayName,
-                    userEmail: responseJson.emailAddress
-                });
-            })
-            .catch((err) => console.log(err))
+            this.securityManager.oauthSignIn();
         }
 
-        const userProfile = this.securityManager.getUserProfile();
+        const userProfile = this.securityManager.getUserInformation(this.state.userAccessToken);
 
         if (userProfile) {
             this.setState({loginUser: userProfile.getUserName()});

@@ -11,5 +11,7 @@ class UserProfile {
    getSuperRole() {
        return "Clinician";
    }
+
+   // User Profile needs: name, email address?, access token?
 }
 export default UserProfile;
