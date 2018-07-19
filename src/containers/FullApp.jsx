@@ -162,19 +162,6 @@ export class FullApp extends Component {
         form.submit();
     }
 
-    getUserInformation = (userAccessToken) => {
-        let url = "https://www.googleapis.com/drive/v3/about?fields=user&access_token="+userAccessToken;
-        // let userName = 'Dr. 123';
-        fetch(url)
-        .then (response => response.json())
-        .then(responseJson => {
-            this.setState({
-                userName: responseJson.user.displayName
-            })
-        })
-        .catch((err) => console.log(err))
-    }
-
     componentWillMount() {
         let accessToken = this.securityManager.getAccessToken();
         this.setState({
@@ -185,16 +172,25 @@ export class FullApp extends Component {
     // On component mount, grab the username of the logged in user
     componentDidMount() {
         if (!this.state.userAccessToken) {
-            this.securityManager.oauthSignIn();
+            let accessToken = this.securityManager.oauthSignIn();
+            this.setState({
+                userAccessToken: accessToken
+            })
         }
 
-        const userProfile = this.securityManager.getUserInformation(this.state.userAccessToken);
-
-        if (userProfile) {
-            this.setState({loginUser: userProfile.getUserName()});
-        } else {
-            console.error("Login failed");
-        }
+        this.securityManager.getUserInformation(this.state.userAccessToken).then(result => {
+            console.log(result);
+            this.setState({
+                userName: result.user.displayName
+            })
+            console.log(this.state.userName);
+            const userProfile = this.securityManager.getUserProfile(this.state.userName);
+            if (userProfile) {
+                this.setState({loginUser: userProfile.getUserName()});
+            } else {
+                console.error("Login failed");
+            }
+        });
     }
 
     // pass this function to children to set full app global state

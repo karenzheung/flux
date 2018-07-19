@@ -3,8 +3,8 @@ import UserProfile from './UserProfile';
 // Security Manager will handle all security related functionality of the app (authentication, authorization, etc)
 class SecurityManager {
 
-    getUserProfile(userName) {
-        return new UserProfile(userName);
+    getUserProfile(name) {
+        return new UserProfile(name);
     }
 
     oauthSignIn = () => {
@@ -46,17 +46,26 @@ class SecurityManager {
         while (m = regex.exec(fragmentString)) {
             params[decodeURIComponent(m[1])] = decodeURIComponent(m[2]);
         }
-        console.log(params);
         return params.access_token;
     }
 
     getUserInformation = (userAccessToken) => {
         let url = "https://www.googleapis.com/drive/v3/about?fields=user&access_token="+userAccessToken;
-        fetch(url)
-        .then (response => response.json())
-        .then(responseJson => {
-        })
-        .catch((err) => console.log(err))
+        return (
+        fetch(url) 
+            .then (response => response.json())
+            // .then(responseJson => {
+            //     console.log(responseJson);
+            //     console.log(responseJson.user.displayName);
+            //     // return (responseJson.user.displayName); 
+            //     return responseJson;
+            // })
+            // .then((name) => {
+            //     console.log(name);
+            //     return (this.getUserProfile(name));
+            // })
+            .catch((err) => console.log(err))
+        )
     }
 }
 export default SecurityManager;
