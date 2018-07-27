@@ -14,6 +14,7 @@ import {Row, Col} from 'react-flexbox-grid';
 import EditorToolbar from './EditorToolbar';
 import Button from '../elements/Button';
 import Divider from 'material-ui/Divider';
+import CircularProgress  from 'material-ui/Progress/CircularProgress.js'
 import AutoReplace from 'slate-auto-replace'
 import SuggestionsPlugin from '../lib/slate-suggestions-dist'
 import position from '../lib/slate-suggestions-dist/caret-position';
@@ -22,6 +23,7 @@ import SingleHashtagKeywordStructuredFieldPlugin from './SingleHashtagKeywordStr
 import NLPHashtagPlugin from './NLPHashtagPlugin'
 import NoteParser from '../noteparser/NoteParser';
 import './FluxNotesEditor.css';
+import { setTimeout } from 'timers';
 
 // This forces the initial block to be inline instead of a paragraph. When insert structured field, prevents adding new lines
 const initialState = Slate.Plain.deserialize('');
@@ -91,7 +93,6 @@ class FluxNotesEditor extends React.Component {
         // Set the initial state when the app is first constructed.
         this.resetEditorState();
         
-        
         // setup structured field plugin
         const structuredFieldPluginOptions = {
             contextManager: this.contextManager,
@@ -123,12 +124,14 @@ class FluxNotesEditor extends React.Component {
             contextManager: this.props.contextManager,
             structuredFieldMapManager: this.structuredFieldMapManager,
             createShortcut: this.props.newCurrentShortcut,
-            insertStructuredFieldTransform: this.insertStructuredFieldTransform,
+            insertStructuredFieldTransformAtRange: this.insertStructuredFieldTransformAtRange,
             getEditorValue: () => this.state.state,
             setEditorValue: (state) => {
                 console.log('setting editorVAlue')
                 this.setState({state})
             },
+            isFetchingAsyncData: this.state.isFetchingAsyncData, 
+            updateFetchingStatus: this.updateFetchingStatus,
         };
         this.NLPHashtagPlugin = NLPHashtagPlugin(NLPHashtagPluginOptions);
         this.plugins.push(this.NLPHashtagPlugin)
@@ -201,7 +204,44 @@ class FluxNotesEditor extends React.Component {
             state: initialState,
             isPortalOpen: false,
             portalOptions: null,
+            isFetchingAsyncData: false,
+            loadingTimeWarrantsWarning: false,
+            fetchTimeout: null,
         };
+    }
+
+
+    updateFetchingStatus = (isFetchingAsyncData) => { 
+        console.log('called updateFetchingStatus')
+        console.log(isFetchingAsyncData)
+        if (!isFetchingAsyncData) { 
+            // If we're not fetching, clear any lagging timers;
+            // Make sure loadingTimeWarrantsWarning is false;
+            console.log("---Clear timeout")
+            // console.log(this.state.fetchTimeout)
+            if (this.state.fetchTimeout !== null) clearTimeout(this.state.fetchTimeout._id)
+            this.setState({
+                loadingTimeWarrantsWarning: false,
+                // Always set this variable, to block multiple requests
+                isFetchingAsyncData,
+                fetchTimeout: null,
+            });
+        } else { 
+            // If we are fetching, set a timer to update the loadingTimeWarrantsWarning variable
+            // If this timer gets executed, we'll display a loading animation in the editor
+            console.log("-- Setting timeout")
+            console.log(this.state.fetchTimeout)
+            // Always set this variable, to block multiple requests
+            this.setState({
+                isFetchingAsyncData,
+                fetchTimeout: setTimeout (() => {
+                    console.log("executingTimeout")
+                    this.setState({
+                        loadingTimeWarrantsWarning: true
+                    });
+                }, 100),
+            })  
+        }
     }
 
     // Reset editor state and clear context
@@ -395,6 +435,11 @@ class FluxNotesEditor extends React.Component {
         let result = this.structuredFieldPlugin.transforms.insertStructuredField(transform, shortcut);
         // console.log("result[0]");
         // console.log(result[0]);
+        return result[0];
+    }
+    insertStructuredFieldTransformAtRange = (transform, shortcut, range) => {
+        if (Lang.isNull(shortcut)) return transform.focus();
+        let result = this.structuredFieldPlugin.transforms.insertStructuredFieldAtRange(transform, shortcut, range);
         return result[0];
     }
 
@@ -1066,6 +1111,20 @@ class FluxNotesEditor extends React.Component {
         this.props.setLayout("right-collapsed");
     }
 
+    renderLoadingNotification = () => { 
+        return (
+            <div id="loading-notification">
+                <div id="loading-circle"> 
+                    <CircularProgress/>
+                </div>
+                <p id="loading-text"> 
+                    Reaching out to NLP Engine
+                </p>
+
+            </div>
+        )
+    }
+
     render = () => {
         const CreatorsPortal = this.suggestionsPluginCreators.SuggestionPortal;
         const InsertersPortal = this.suggestionsPluginInserters.SuggestionPortal;
@@ -1181,6 +1240,7 @@ class FluxNotesEditor extends React.Component {
                             className="editor-panel"
                             placeholder={'Enter your clinical note here or choose a template to start from...'}
                             plugins={this.plugins}
+                            // readOnly={!this.props.isNoteViewerEditable || this.state.loadingTimeWarrantsWarning}
                             readOnly={!this.props.isNoteViewerEditable}
                             state={this.state.state}
                             ref={function (c) {
@@ -1193,6 +1253,7 @@ class FluxNotesEditor extends React.Component {
                             onSelectionChange={this.onSelectionChange}
                             schema={schema}
                         />
+                        {this.state.loadingTimeWarrantsWarning && this.renderLoadingNotification()}
                         {errorDisplay}
                     </div>
 
