@@ -218,7 +218,6 @@ class FluxNotesEditor extends React.Component {
             // If we're not fetching, clear any lagging timers;
             // Make sure loadingTimeWarrantsWarning is false;
             console.log("---Clear timeout")
-            // console.log(this.state.fetchTimeout)
             if (this.state.fetchTimeout !== null) clearTimeout(this.state.fetchTimeout._id)
             this.setState({
                 loadingTimeWarrantsWarning: false,
@@ -229,9 +228,6 @@ class FluxNotesEditor extends React.Component {
         } else { 
             // If we are fetching, set a timer to update the loadingTimeWarrantsWarning variable
             // If this timer gets executed, we'll display a loading animation in the editor
-            console.log("-- Setting timeout")
-            console.log(this.state.fetchTimeout)
-            // Always set this variable, to block multiple requests
             this.setState({
                 isFetchingAsyncData,
                 fetchTimeout: setTimeout (() => {
@@ -239,7 +235,7 @@ class FluxNotesEditor extends React.Component {
                     this.setState({
                         loadingTimeWarrantsWarning: true
                     });
-                }, 100),
+                }, 10),
             })  
         }
     }
@@ -1111,48 +1107,25 @@ class FluxNotesEditor extends React.Component {
         this.props.setLayout("right-collapsed");
     }
 
-    renderLoadingNotification = () => { 
-        return (
-            <div id="loading-notification">
-                <div id="loading-circle"> 
-                    <CircularProgress/>
-                </div>
-                <p id="loading-text"> 
-                    Reaching out to NLP Engine
-                </p>
-
-            </div>
-        )
-    }
-
-    render = () => {
-        const CreatorsPortal = this.suggestionsPluginCreators.SuggestionPortal;
-        const InsertersPortal = this.suggestionsPluginInserters.SuggestionPortal;
-
+    // Renders the noteDescription of the editor
+    renderNoteDescriptionContent = () => { 
         // Preset note header information
         let noteTitle = "New Note";
         let date = Moment(new Date()).format('DD MMM YYYY');
         let signedString = "not signed";
         let source = "Dana Farber";
-
         // If a note is selected, update the note header with information from the selected note
         if (this.props.selectedNote) {
             noteTitle = this.props.selectedNote.subject;
             date = this.props.selectedNote.date;
             source = this.props.selectedNote.hospital;
-
-            if(this.props.selectedNote.signed) {
-                signedString = this.props.selectedNote.clinician;
-            } else {
-                signedString = "not signed";
-            }
+            signedString = (this.props.selectedNote.signed ? this.props.selectedNote.clinician : "not signed")
         }
 
-        let noteDescriptionContent = null;
         if (this.props.patient == null) {
-            noteDescriptionContent = "";
+            return "";
         } else {
-            noteDescriptionContent = (
+            return (
                 <div id="note-description">
                     <Row end="xs">
                         <Col xs={2}>
@@ -1202,6 +1175,12 @@ class FluxNotesEditor extends React.Component {
                 </div>
             );
         }
+    }
+    
+    render = () => {
+        const CreatorsPortal = this.suggestionsPluginCreators.SuggestionPortal;
+        const InsertersPortal = this.suggestionsPluginInserters.SuggestionPortal;
+        
         let errorDisplay = "";
         if (this.props.errors && this.props.errors.length > 0) {
             errorDisplay = (
@@ -1222,12 +1201,13 @@ class FluxNotesEditor extends React.Component {
             <div id="clinical-notes" className="dashboard-panel" onClick={(event) => {
                 editor.focus();
             }}>
-                {noteDescriptionContent}
+                {this.renderNoteDescriptionContent()}
                 <div className="MyEditor-root">
                     { !this.props.inModal &&
                         <EditorToolbar
                             contextManager={this.props.contextManager}
                             isReadOnly={!this.props.isNoteViewerEditable}
+                            loadingTimeWarrantsWarning={this.state.loadingTimeWarrantsWarning}
                             onBlockCheck={this.handleBlockCheck}
                             onBlockUpdate={this.handleBlockUpdate}
                             onMarkCheck={this.handleMarkCheck}
@@ -1253,7 +1233,6 @@ class FluxNotesEditor extends React.Component {
                             onSelectionChange={this.onSelectionChange}
                             schema={schema}
                         />
-                        {this.state.loadingTimeWarrantsWarning && this.renderLoadingNotification()}
                         {errorDisplay}
                     </div>
 
