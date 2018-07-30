@@ -4,7 +4,8 @@ import LandingPage from '../components/LandingPage';
 import LaunchPage from '../components/LaunchPage';
 
 export default class AppManager {
-    constructor() {
+    constructor() {  
+
         this.apps = [{
                 path: '/',
                 display: 'Flux Notes™',
@@ -117,12 +118,12 @@ export default class AppManager {
                 shortcuts: []
             },
             {
-                path: '/demo4',
+                path: '/smart',
                 display: 'Flux Notes™',
                 app: FullApp,
                 isExact: true,
                 dataSource: 'HardCodedReadOnlyDataSource',
-                patientId: 'fhir-id',
+                patientId: null,
                 shortcuts: []
             },
             {
